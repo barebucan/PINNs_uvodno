@@ -7,24 +7,25 @@ T = 20
 time_period = 1500
 r = 0.001
 N = 10
-hidden_size =64
-l1 = 1e2
-LR = 1e-2
-epochs = 50000
+hidden_size =32
+l1 = 1
+LR = 3e-3
+epochs = 5000
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 class PINN(nn.Module):
     def __init__(self, n_layers) -> None:
         super().__init__()
-        self.fs = nn.Sequential(nn.Linear(1, hidden_size), nn.Tanh())
-        self.fc1 = nn.Sequential(nn.Linear(hidden_size, hidden_size), nn.Tanh())
-        self.fc2 = nn.Sequential(nn.Linear(hidden_size, hidden_size), nn.Tanh())
+        self.fs = nn.Sequential(nn.Linear(1, hidden_size), nn.BatchNorm1d(num_features=hidden_size), nn.Tanh())
+        self.fc1 = nn.Sequential(nn.Linear(hidden_size, hidden_size), nn.BatchNorm1d(num_features=hidden_size), nn.Tanh())
+        self.fc2 = nn.Sequential(nn.Linear(hidden_size, hidden_size), nn.BatchNorm1d(num_features=hidden_size), nn.Tanh())
+        self.fc3 = nn.Sequential(nn.Linear(hidden_size, hidden_size), nn.BatchNorm1d(num_features=hidden_size), nn.Tanh())
         self.fo = nn.Linear(hidden_size, 1)
         
         self.r = nn.Parameter(data=torch.tensor([0.]))
 
     def forward(self, x):
-        return self.fo(self.fc2(self.fc1(self.fs(x))))
+        return self.fo(self.fc3(self.fc2(self.fc1(self.fs(x)))))
 
 def true_function(r, T0, T_env, time_period, num_points=100):
 
@@ -49,6 +50,7 @@ def plot(graph_values, t_values_grpah, T_values, t_values, T_pred):
     plt.legend()
     plt.grid(True)
     plt.savefig("plot.png")
+    plt.close()
 
 def grad(inputs, outputs):
     torch.autograd.grad(outputs, inputs, grad_outputs=torch.ones_like(outputs), 
@@ -77,8 +79,10 @@ def main():
     T_values = T_values
 
     model = PINN(3)
-    optimizer = torch.optim.Adam(model.parameters(), lr=LR)
-
+    # optimizer = torch.optim.SGD(model.parameters(), lr=LR)
+    optimizer = torch.optim.Adam(model.parameters(), lr=LR, weight_decay=1e-6, betas=(0.9, 0.999))
+    lr_scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.95)
+    
     for epoch in range(epochs):
 
         optimizer.zero_grad()
@@ -86,8 +90,9 @@ def main():
         loss = l1 * data_loss(T_pred, T_values.view(-1,1)) + physics_loss(model)
         loss.backward()
         optimizer.step()
+        lr_scheduler.step()
 
-        if epoch % 1000 == 0:
+        if epoch % 100 == 0:
             print("Epoch: ", epoch, "Loss: ", loss.item())
             plot(graph_values, t_values_grpah ,T_values.detach().cpu().numpy(), t_values.detach().cpu().numpy(), T_pred.detach().cpu().numpy())
             print("r: ", model.r.item())

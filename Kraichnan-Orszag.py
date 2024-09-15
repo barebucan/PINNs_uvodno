@@ -27,7 +27,7 @@ class U_net(nn.Module):
     def __init__(self):
         super(U_net, self).__init__()
         self.fc0 = nn.Sequential(nn.Linear(1, hidden_size_u_net), nn.Tanh())
-        self.fclist = nn.ModuleList([nn.Sequential(nn.Linear(hidden_size_u_net, hidden_size_u_net), nn.Tanh()) for i in range(N_LAYERS_U_NET)])
+        self.fclist = nn.ModuleList([nn.Sequential(nn.Linear(hidden_size_u_net, hidden_size_u_net), nn.BatchNorm1d(hidden_size_u_net),nn.Tanh()) for i in range(N_LAYERS_U_NET)])
         self.fout = nn.Linear(hidden_size_u_net, 3)
     
     def forward(self, t):
