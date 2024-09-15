@@ -1,0 +1,3 @@
+Adaptive loss balacing
+implementing LBFGS
+implementirat PLANT
