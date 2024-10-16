@@ -1,35 +1,91 @@
-Physics-Informed Neural Networks (PINNs) Project
-This repository contains implementations of Physics-Informed Neural Networks (PINNs) for solving various differential equations and related tasks. The main objective is to solve Ordinary Differential Equations (ODEs) by training neural networks that incorporate physical laws (via differential equations) into the learning process. This approach allows the model to fit the data and estimate unknown parameters or functions. Additionally, the project includes a simple implementation of a Physics-Informed Deep Operator Network (DeepONet).
+# Physics-Informed Neural Networks (PINNs)
 
-Project Structure
-The project consists of four Python scripts:
+This repository contains implementations of Physics-Informed Neural Networks (PINNs) for solving differential equations and modeling physical systems. The project includes examples such as the Kraichnan-Orszag problem and deep operator networks.
 
-1. cooling.py
-This script implements a simple PINN to solve a cooling problem. The goals include:
+## Project Structure
 
-Fitting data generated from a cooling process.
-Estimating one of the parameters within the governing equation (e.g., a thermal constant).
-This example demonstrates how a PINN can approximate the solution and infer hidden parameters.
+```
+.
+├── training_param_plots/
+├── Kraichnan-Orszag.py
+├── Kraichnan-Orszag_solution.png
+├── PI_DeepONet.py
+├── README.md
+├── cooling.py
+└── oscilator_priod.py
+```
 
-2. oscillator_period.py
-This script solves an ODE describing an oscillator's motion, focusing on determining the oscillation period. The challenges include:
+## File Descriptions
 
-Solving a second-order ODE.
-Estimating the oscillation period.
-This task is more complex than cooling.py due to the second-order nature of the ODE and the indirect target.
+- `training_param_plots/`: Directory containing plots of training parameters
+- `Kraichnan-Orszag.py`: Implementation of the Kraichnan-Orszag problem using PINNs
+- `Kraichnan-Orszag_solution.png`: Visualization of the Kraichnan-Orszag solution
+- `PI_DeepONet.py`: Physics-Informed Deep Operator Network implementation
+- `cooling.py`: PINNs application for cooling processes
+- `oscilator_priod.py`: PINNs for modeling oscillator periods
 
-3. Kraichnan-Orszag.py
-This script implements a PINN to solve the Kraichnan-Orszag system, a set of three interrelated ODEs describing a dynamic system. The main objectives are:
+## Kraichnan-Orszag Solution
 
-Learning the structure of the equations connecting three parameters.
-Estimating two hyperparameters in the equations.
-This advanced example involves learning both the functional relationships and system dynamics.
+The Kraichnan-Orszag problem is a challenging test case for numerical methods in fluid dynamics. Below is the visualization of the solution obtained using our PINN approach:
 
-4. PI_DeepONet.py
-This script implements a simple Physics-Informed DeepONet. Key features include:
+![Kraichnan-Orszag Solution](Kraichnan-Orszag_solution.png)
 
-Using a DeepONet to learn mappings between function spaces.
-Adding losses like the ODE loss and initial condition (IC) loss to improve learning.
-This showcases the extension of PINNs to DeepONets for more flexible system approximations.
+## Setup and Installation
 
+1. Clone this repository:
+   ```
+   git clone https://github.com/your-username/pinns-project.git
+   cd pinns-project
+   ```
 
+2. Install the required dependencies:
+   ```
+   pip install torch numpy matplotlib scipy
+   ```
+
+## Usage
+
+To run the Kraichnan-Orszag problem simulation:
+
+```
+python Kraichnan-Orszag.py
+```
+
+For the Physics-Informed Deep Operator Network:
+
+```
+python PI_DeepONet.py
+```
+
+Modify the parameters in each script as needed for different configurations.
+
+## Key Features
+
+- Implementation of Physics-Informed Neural Networks
+- Kraichnan-Orszag problem solver
+- Physics-Informed Deep Operator Networks
+- Applications in cooling processes and oscillator period modeling
+- Visualization of results and training parameters
+
+## Results
+
+The `training_param_plots/` directory contains visualizations of various training parameters. Check these plots to understand the training process and model performance.
+
+## Contributing
+
+Contributions to improve the implementations, add new physical models, or enhance documentation are welcome. Please follow these steps:
+
+1. Fork the repository
+2. Create a new branch for your feature
+3. Commit your changes
+4. Push to the branch
+5. Create a new Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Acknowledgments
+
+- The PINN methodology is based on the work of M. Raissi, P. Perdikaris, and G.E. Karniadakis
+- The Kraichnan-Orszag problem is a well-known benchmark in computational physics
